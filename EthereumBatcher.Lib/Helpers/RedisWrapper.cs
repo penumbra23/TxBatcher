@@ -5,7 +5,7 @@ namespace EthereumBatcher.Lib.Helpers
     /// <summary>
     /// Simple wrapper for Redis cache.
     /// </summary>
-    class RedisWrapper
+    public class RedisWrapper
     {
         public RedisWrapper(string redisConnectionString)
         {

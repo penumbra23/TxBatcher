@@ -2,6 +2,7 @@
 TxBatcher focuses on surpassing the physical limit of Ethereum (or at least tries the same). Ethereum's throughput is currently peaked around 30 TPS. Some of the reasons why it's being slow implies validating transfers, simulating transaction calls and in general PoW algorithm.
 
 **What is TxBatcher?** It's an extensions of the popular [Nethereum](https://github.com/Nethereum/Nethereum) .NET library for interaction between your C# app and the Ethereum blockchain. 
+
 **What is TxBatcher capable of?** It's capable of sending multiple transactions at the same time from the same Ethereum address. Some TGE and ICO token drops were successfully finished in less than 1 day, with a volume of 20k transactions thanks to this library.
 
 ## How does it work?

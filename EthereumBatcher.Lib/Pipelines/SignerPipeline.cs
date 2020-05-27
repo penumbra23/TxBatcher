@@ -69,7 +69,7 @@ namespace EthereumBatcher.Lib.Pipelines
             // Estimate gas price
             BigInteger gasPrice = await GasEstimator.EstimateGasPrice();
 
-            HexBigInteger balance = await Web3.Eth.GetBalance.SendRequestAsync(Web3.TransactionManager.Account.Address);
+            HexBigInteger balance = await Web3.Eth.GetBalance.SendRequestAsync(senderAccount.Address);
 
             if (gasPrice * gas.Value >= (balance.Value * 19 / 20))
                 throw new BalanceException("Insufficient balance for gas.");
@@ -83,7 +83,7 @@ namespace EthereumBatcher.Lib.Pipelines
                     Gas = new HexBigInteger(gas),
                     From = senderAccount.Address,
                     To = function.ContractAddress,
-                    Value = value,
+                    Value = value ?? new HexBigInteger(0),
                     Nonce = new HexBigInteger(nonce),
                     Data = function.GetData(parameters)
                 });
@@ -98,6 +98,8 @@ namespace EthereumBatcher.Lib.Pipelines
             if (string.IsNullOrEmpty(Web3.TransactionManager.Account.Address))
                 throw new AuthenticationException("No private key provided in the underlying Web3 instance.");
 
+            string senderAddress = Web3.TransactionManager.Account.Address;
+
             // Calls the function to see if it can be executed
             HexBigInteger gas = gasLimit ?? await EstimateGas(new CallInput()
             {
@@ -110,20 +112,20 @@ namespace EthereumBatcher.Lib.Pipelines
             // Estimate gas price
             BigInteger gasPrice = await GasEstimator.EstimateGasPrice();
 
-            HexBigInteger balance = await Web3.Eth.GetBalance.SendRequestAsync(Web3.TransactionManager.Account.Address);
+            HexBigInteger balance = await Web3.Eth.GetBalance.SendRequestAsync(senderAddress);
 
             if (gasPrice * gas.Value >= (balance.Value * 19 / 20))
                 throw new BalanceException("Insufficient balance for gas.");
 
-            BigInteger nonce = await GetNonce(Web3.TransactionManager.Account.Address);
+            BigInteger nonce = await GetNonce(senderAddress);
 
             return await function.SendTransactionAndWaitForReceiptAsync(new TransactionInput()
             {
                 GasPrice = new HexBigInteger(gasPrice),
                 Gas = gas,
-                From = Web3.TransactionManager.Account.Address,
+                From = senderAddress,
                 To = function.ContractAddress,
-                Value = value,
+                Value = value ?? new HexBigInteger(0),
                 Nonce = new HexBigInteger(nonce),
                 Data = function.GetData(parameters)
             }, null, parameters);
